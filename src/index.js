@@ -38,9 +38,25 @@ app.get('/talker/:id', async (req, res) => {
 
 const generateToken = () => crypto.randomBytes(8).toString('hex');
 
-app.post('/login', (_req, res) => {
+app.post('/login', (req, res) => {
   const token = generateToken();
-  res.status(200).json({ token });
+  const { email, password } = req.body;
+  const isEmailValid = () => email.includes('@') && email.includes('.com');
+  const isPasswordValid = () => password.length >= 6;
+
+  if (!email) {
+    return res.status(400).json({ message: 'O campo "email" é obrigatório' });
+  }
+  if (!isEmailValid()) {
+    return res.status(400).json({ message: 'O "email" deve ter o formato "email@email.com"' });
+  }
+  if (!password) {
+    return res.status(400).json({ message: 'O campo "password" é obrigatório' });
+  }
+  if (!isPasswordValid()) {
+    return res.status(400).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+  } 
+    res.status(200).json({ token });
 });
 
 app.listen(PORT, () => {
