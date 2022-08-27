@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs').promises;
 const { join } = require('path');
+const crypto = require('crypto');
 
 const app = express();
 app.use(bodyParser.json());
@@ -33,6 +34,13 @@ app.get('/talker/:id', async (req, res) => {
   } else {
     res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
   }
+});
+
+const generateToken = () => crypto.randomBytes(8).toString('hex');
+
+app.post('/login', (_req, res) => {
+  const token = generateToken();
+  res.status(200).json({ token });
 });
 
 app.listen(PORT, () => {
