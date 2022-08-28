@@ -10,6 +10,7 @@ const {
   isNameValid,
   isAgeValid,
   isTalkValid,
+  editTalker,
 } = require('./helpers');
 
 const app = express();
@@ -70,6 +71,20 @@ app.post('/talker', async (req, res) => {
   }
 
   return res.status(201).json(await createTalker({ name, age, talk }));
+});
+
+app.put('/talker/:id', async (req, res) => {
+  const token = req.header('authorization');
+  const { id } = req.params;
+  const { name, age, talk } = req.body;
+
+  const error = isTokenValid(token) || isNameValid(name) || isAgeValid(age) || isTalkValid(talk);
+
+  if (error) {
+    return res.status(error.status).json({ message: error.message });
+  }
+
+  return res.status(200).json(await editTalker({ id, name, age, talk }));
 });
 
 app.listen(PORT, () => {

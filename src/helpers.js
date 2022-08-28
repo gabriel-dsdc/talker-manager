@@ -6,6 +6,9 @@ const readJson = async () => {
   const jsonFile = await fs.readFile(jsonPath, 'utf-8');
   return JSON.parse(jsonFile);
 };
+const writeJson = async (data) => {
+  await fs.writeFile(jsonPath, JSON.stringify(data), 'utf-8');
+};
 
 const isEmailValid = (email) => email.includes('@') && email.includes('.com');
 const isPasswordValid = (password) => password.length >= 6;
@@ -90,13 +93,26 @@ const createTalker = async ({ name, age, talk }) => {
     age,
     talk,
   });
-  await fs.writeFile(jsonPath, JSON.stringify(data), 'utf-8');
+  await writeJson(data);
   return data[data.length - 1];
+};
+
+const editTalker = async ({ id, name, age, talk }) => {
+  const data = await readJson();
+  const talkerFound = data.find((talker) => talker.id === Number(id));
+
+  talkerFound.name = name;
+  talkerFound.age = age;
+  talkerFound.talk = talk;
+
+  await writeJson(data);
+  return talkerFound;
 };
 
 module.exports = {
   readJson,
   createTalker,
+  editTalker,
   isEmailValid,
   isPasswordValid,
   isTokenValid,
