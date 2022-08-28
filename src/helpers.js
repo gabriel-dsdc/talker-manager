@@ -1,6 +1,9 @@
 const fs = require('fs').promises;
 const { join } = require('path');
 
+const HTTP_BAD_REQUEST_STATUS = 400;
+const HTTP_UNAUTHORIZED_STATUS = 401;
+
 const jsonPath = join(__dirname, '/talker.json');
 const readJson = async () => {
   const jsonFile = await fs.readFile(jsonPath, 'utf-8');
@@ -15,7 +18,7 @@ const isPasswordValid = (password) => password.length >= 6;
 
 const isTokenValid = (token) => {
   const response = {
-    status: 401,
+    status: HTTP_UNAUTHORIZED_STATUS,
     message: undefined,
   };
 
@@ -29,7 +32,7 @@ const isTokenValid = (token) => {
 
 const isNameValid = (name) => {
   const response = {
-    status: 400,
+    status: HTTP_BAD_REQUEST_STATUS,
     message: undefined,
   };
   if (!name) {
@@ -42,7 +45,7 @@ const isNameValid = (name) => {
 
 const isAgeValid = (age) => {
   const response = {
-    status: 400,
+    status: HTTP_BAD_REQUEST_STATUS,
     message: undefined,
   };
 
@@ -65,22 +68,30 @@ const isDateValid = (watchedAt) => {
 };
 
 const isWatchAtValid = (watchedAt) => {
-  if (!watchedAt) return { status: 400, message: 'O campo "watchedAt" é obrigatório' };
+  if (!watchedAt) {
+    return { status: HTTP_BAD_REQUEST_STATUS, message: 'O campo "watchedAt" é obrigatório' };
+  }
   if (!isDateValid(watchedAt)) {
-    return { status: 400, message: 'O campo "watchedAt" deve ter o formato "dd/mm/aaaa"' };
+    return {
+      status: HTTP_BAD_REQUEST_STATUS,
+      message: 'O campo "watchedAt" deve ter o formato "dd/mm/aaaa"' };
   }
 };
 
 const isRateValid = (rate) => {
-  if (rate === undefined) return { status: 400, message: 'O campo "rate" é obrigatório' };
+  if (rate === undefined) {
+    return { status: HTTP_BAD_REQUEST_STATUS, message: 'O campo "rate" é obrigatório' };
+  }
   if (!(rate >= 1 && rate <= 5)) {
-    return { status: 400, message: 'O campo "rate" deve ser um inteiro de 1 à 5' };
+    return { 
+      status: HTTP_BAD_REQUEST_STATUS,
+      message: 'O campo "rate" deve ser um inteiro de 1 à 5' };
   }
 };
 
 const isTalkValid = (talk) => {
   if (!talk) {
-    return { status: 400, message: 'O campo "talk" é obrigatório' };
+    return { status: HTTP_BAD_REQUEST_STATUS, message: 'O campo "talk" é obrigatório' };
   }
   return isWatchAtValid(talk.watchedAt) || isRateValid(talk.rate);
 };
@@ -109,10 +120,18 @@ const editTalker = async ({ id, name, age, talk }) => {
   return talkerFound;
 };
 
+const deleteTalker = async ({ id }) => {
+  const data = await readJson();
+  const talkerRemoved = data.filter((talker) => talker.id !== Number(id));
+
+  await writeJson(talkerRemoved);
+};
+
 module.exports = {
   readJson,
   createTalker,
   editTalker,
+  deleteTalker,
   isEmailValid,
   isPasswordValid,
   isTokenValid,
