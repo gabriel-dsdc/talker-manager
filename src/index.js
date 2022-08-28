@@ -12,6 +12,7 @@ const {
   isTalkValid,
   editTalker,
   deleteTalker,
+  searchTalker,
 } = require('./helpers');
 
 const app = express();
@@ -31,6 +32,22 @@ app.get('/', (_request, response) => {
 
 app.get('/talker', async (_req, res) => {
   res.status(HTTP_OK_STATUS).json(await readJson());
+});
+
+app.get('/talker/search', async (req, res) => {
+  const { q: query } = req.query;
+  const token = req.header('authorization');
+  const error = isTokenValid(token);
+
+  if (error) {
+    return res.status(error.status).json({ message: error.message });
+  }
+
+  if (query) {
+    res.status(HTTP_OK_STATUS).json(await searchTalker(query));
+  } else {
+    res.status(HTTP_OK_STATUS).json(await readJson());
+  }
 });
 
 app.get('/talker/:id', async (req, res) => {

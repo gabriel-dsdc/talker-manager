@@ -127,11 +127,19 @@ const deleteTalker = async ({ id }) => {
   await writeJson(talkerRemoved);
 };
 
+const searchTalker = async (query) => {
+  const data = await readJson();
+  const talkersFound = data.filter((talker) => talker.name.includes(query));
+
+  return talkersFound;
+};
+
 module.exports = {
   readJson,
   createTalker,
   editTalker,
   deleteTalker,
+  searchTalker,
   isEmailValid,
   isPasswordValid,
   isTokenValid,
