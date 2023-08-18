@@ -1,0 +1,377 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Talker Manager",
+    "version": "1.0.0",
+    "contact": { "url": "https://gabriel-dsdc.github.io/" }
+  },
+  "paths": {
+    "/talker": {
+      "get": {
+        "summary": "Get a list with all Talkers",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      {
+                        "type": "object",
+                        "properties": { "id": { "type": "integer" } },
+                        "required": ["id"],
+                        "example": { "id": 5 }
+                      },
+                      { "$ref": "#/components/schemas/Talker" }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Talker",
+        "description": "",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Talker"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": { "$ref": "#/components/responses/Talker" },
+          "400": { "$ref": "#/components/responses/InvalidTalkerError" },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" }
+        },
+        "security": [{ "bearerAuth": [] }],
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/talker/{id}": {
+      "get": {
+        "summary": "Find talker by ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of talker to use",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/Talker" },
+          "404": {
+            "description": "Talker not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "message": { "type": "string" } },
+                  "example": { "message": "Pessoa palestrante não encontrada" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Edit Talker by ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Talker" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/Talker" },
+          "400": { "$ref": "#/components/responses/InvalidTalkerError" },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" }
+        },
+        "security": [{ "bearerAuth": [] }],
+        "x-codegen-request-body-name": "body"
+      },
+      "delete": {
+        "summary": "Delete Talker by ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The talker was deleted successfully"
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Log in to get the token",
+        "description": "",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                },
+                "required": ["email", "password"],
+                "example": {
+                  "email": "deferiascomigo@gmail.com",
+                  "password": "12345678"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": { "type": "string" }
+                  },
+                  "required": ["token"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid email/password format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                },
+                "examples": {
+                  "Email is required": {
+                    "value": { "message": "O campo \"email\" é obrigatório" }
+                  },
+                  "Invalid email format": {
+                    "value": {
+                      "message": "O \"email\" deve ter o formato \"email@email.com\""
+                    }
+                  },
+                  "Password is required": {
+                    "value": { "message": "O campo \"password\" é obrigatório" }
+                  },
+                  "Password length": {
+                    "value": {
+                      "message": "O \"password\" deve ter pelo menos 6 caracteres"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/talker/search": {
+      "get": {
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      {
+                        "type": "object",
+                        "properties": { "id": { "type": "integer" } },
+                        "required": ["id"],
+                        "example": { "id": 5 }
+                      },
+                      { "$ref": "#/components/schemas/Talker" }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "security": [{ "bearerAuth": [] }]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Talker": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer"
+          },
+          "talk": {
+            "type": "object",
+            "properties": {
+              "rate": {
+                "type": "integer"
+              },
+              "watchedAt": {
+                "type": "string"
+              }
+            },
+            "required": ["rate", "watchedAt"]
+          }
+        },
+        "required": ["name", "age", "talk"],
+        "example": {
+          "name": "Zendaya Maree",
+          "age": 24,
+          "talk": {
+            "rate": 5,
+            "watchedAt": "25/09/2020"
+          }
+        }
+      }
+    },
+    "responses": {
+      "Talker": {
+        "description": "OK",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": { "id": { "type": "integer" } },
+                  "required": ["id"],
+                  "example": { "id": 5 }
+                },
+                { "$ref": "#/components/schemas/Talker" }
+              ]
+            }
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "description": "Access token is missing or invalid",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "Missing Token": {
+                "value": { "message": "Token não encontrado" }
+              },
+              "Invalid Token": {
+                "value": { "message": "Token inválido" }
+              }
+            }
+          }
+        }
+      },
+      "InvalidTalkerError": {
+        "description": "Talker is invalid",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": { "message": { "type": "string" } }
+            },
+            "examples": {
+              "Missing Name": {
+                "value": { "message": "O campo \"name\" é obrigatório" }
+              },
+              "Name length": {
+                "value": {
+                  "message": "O \"name\" deve ter pelo menos 3 caracteres"
+                }
+              },
+              "Missing Age": {
+                "value": { "message": "O campo \"age\" é obrigatório" }
+              },
+              "Over 18 years old": {
+                "value": {
+                  "message": "A pessoa palestrante deve ser maior de idade"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Any 16 character string"
+      }
+    }
+  }
+}

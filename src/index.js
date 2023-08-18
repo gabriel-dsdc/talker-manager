@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./openapi.json');
 const {
   readJson,
   createTalker,
@@ -17,6 +19,19 @@ const {
 
 const app = express();
 app.use(bodyParser.json());
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+  swaggerOptions: {
+    persistAuthorization: true,
+    operationsSorter: (a, b) => {
+      const customOrder = ['get-/talker', 'get-/talker/{id}', 'post-/login',
+      'post-/talker', 'put-/talker/{id}', 'delete-/talker/{id}', 'get-/talker/search'];
+      const indexA = customOrder.indexOf(`${a.get('method')}-${a.get('path')}`);
+      const indexB = customOrder.indexOf(`${b.get('method')}-${b.get('path')}`);
+
+      return indexA - indexB;
+    },
+  },
+}));
 
 const HTTP_OK_STATUS = 200;
 const HTTP_CREATED_STATUS = 201;
