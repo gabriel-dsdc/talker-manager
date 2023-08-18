@@ -1,10 +1,11 @@
+const crypto = require('crypto');
 const express = require('express');
 const bodyParser = require('body-parser');
-const crypto = require('crypto');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./openapi.json');
 const {
   readJson,
+  resetJsonData,
   createTalker,
   isEmailValid,
   isPasswordValid,
@@ -27,9 +28,11 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
       'post-/talker', 'put-/talker/{id}', 'delete-/talker/{id}', 'get-/talker/search'];
       const indexA = customOrder.indexOf(`${a.get('method')}-${a.get('path')}`);
       const indexB = customOrder.indexOf(`${b.get('method')}-${b.get('path')}`);
-
+      
       return indexA - indexB;
     },
+    // eslint-disable-next-line no-undef
+    onComplete: async () => fetch('/'),
   },
 }));
 
@@ -41,7 +44,8 @@ const HTTP_NOT_FOUND_STATUS = 404;
 const PORT = '3000';
 
 // não remova esse endpoint, e para o avaliador funcionar
-app.get('/', (_request, response) => {
+app.get('/', async (_request, response) => {
+  await resetJsonData();
   response.status(HTTP_OK_STATUS).send();
 });
 

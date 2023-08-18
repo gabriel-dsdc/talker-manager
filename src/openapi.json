@@ -58,7 +58,7 @@
     },
     "/talker/{id}": {
       "get": {
-        "summary": "Find talker by ID",
+        "summary": "Find Talker by ID",
         "description": "",
         "parameters": [
           {
@@ -218,6 +218,8 @@
     },
     "/talker/search": {
       "get": {
+        "summary": "Search Talker by ID",
+        "description": "",
         "parameters": [
           {
             "name": "q",
