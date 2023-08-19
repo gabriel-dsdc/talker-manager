@@ -3,7 +3,8 @@
   "info": {
     "title": "Talker Manager",
     "version": "1.0.0",
-    "contact": { "url": "https://gabriel-dsdc.github.io/" }
+    "contact": { "url": "https://gabriel-dsdc.github.io/" },
+    "description": "### All data is **reset** on browser reload."
   },
   "paths": {
     "/talker": {

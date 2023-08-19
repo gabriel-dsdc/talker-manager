@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const express = require('express');
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./_openapi.json');
+const swaggerDocument = require('./openapi.json');
 const {
   readJson,
   resetJsonData,
@@ -16,7 +16,7 @@ const {
   editTalker,
   deleteTalker,
   searchTalker,
-} = require('./_helpers');
+} = require('./helpers');
 
 const app = express();
 app.use(bodyParser.json());

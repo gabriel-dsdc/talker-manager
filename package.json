@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --runInBand",
     "test:mocha": "nyc --all --include api mocha src/tests/integration/*.js --exit",
-    "restore": "cp __tests__/seed.json api/_talker.json",
+    "restore": "cp __tests__/seed.json api/talker.json",
     "start": "node api/index.js",
     "dev": "nodemon api/index.js --ignore 'api/*.json'",
     "lint": "eslint --no-inline-config --no-error-on-unmatched-pattern -c .eslintrc.json ."
