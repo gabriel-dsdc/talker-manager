@@ -21,6 +21,7 @@ const {
 const app = express();
 app.use(bodyParser.json());
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+  customCss: '.swagger-ui .topbar { display: none }',
   swaggerOptions: {
     persistAuthorization: true,
     operationsSorter: (a, b) => {
@@ -46,7 +47,7 @@ const PORT = '3000';
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', async (_request, response) => {
   await resetJsonData();
-  response.status(HTTP_OK_STATUS).send();
+  response.status(HTTP_OK_STATUS).send('<a href="/docs">/docs</a>');
 });
 
 app.get('/talker', async (_req, res) => {
@@ -147,3 +148,5 @@ app.delete('/talker/:id', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Online at http://localhost:${PORT}`);
 });
+
+module.exports = app;
