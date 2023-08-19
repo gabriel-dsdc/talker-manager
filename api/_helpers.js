@@ -4,13 +4,13 @@ const { join } = require('path');
 const HTTP_BAD_REQUEST_STATUS = 400;
 const HTTP_UNAUTHORIZED_STATUS = 401;
 
-const readJson = async (path = '/talker.json') => {
+const readJson = async (path = '/_talker.json') => {
   const jsonPath = (join(__dirname, path));
   const jsonFile = await fs.readFile(jsonPath, 'utf-8');
   return JSON.parse(jsonFile);
 };
 const writeJson = async (data) => {
-  const jsonPath = (join(__dirname, '/talker.json'));
+  const jsonPath = (join(__dirname, '/_talker.json'));
   await fs.writeFile(jsonPath, JSON.stringify(data, null, 2), 'utf-8');
 };
 

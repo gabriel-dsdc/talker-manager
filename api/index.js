@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const express = require('express');
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./openapi.json');
+const swaggerDocument = require('./_openapi.json');
 const {
   readJson,
   resetJsonData,
@@ -16,7 +16,7 @@ const {
   editTalker,
   deleteTalker,
   searchTalker,
-} = require('./helpers');
+} = require('./_helpers');
 
 const app = express();
 app.use(bodyParser.json());
@@ -47,7 +47,10 @@ const PORT = '3000';
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', async (_request, response) => {
   await resetJsonData();
-  response.status(HTTP_OK_STATUS).send('<a href="/docs">/docs</a>');
+  response.status(HTTP_OK_STATUS).send(
+    '<p style="display:flex;justify-content:center;align-items:center;font-size:2em;'
+    + 'height:calc(100vh - 24px);margin:0;"><a href="/docs">/docs</a><p>',
+  );
 });
 
 app.get('/talker', async (_req, res) => {

@@ -2,13 +2,13 @@
   "name": "sd-0x-project-talker-manager",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "api/index.js",
   "scripts": {
     "test": "jest --runInBand",
-    "test:mocha": "nyc --all --include src mocha src/tests/integration/*.js --exit",
-    "restore": "cp __tests__/seed.json src/talker.json",
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js --ignore 'src/talker.json'",
+    "test:mocha": "nyc --all --include api mocha src/tests/integration/*.js --exit",
+    "restore": "cp __tests__/seed.json api/_talker.json",
+    "start": "node api/index.js",
+    "dev": "nodemon api/index.js --ignore 'api/*.json'",
     "lint": "eslint --no-inline-config --no-error-on-unmatched-pattern -c .eslintrc.json ."
   },
   "keywords": [],
