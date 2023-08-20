@@ -15,7 +15,7 @@ const writeJson = async (data) => {
 };
 
 const resetJsonData = async () => {
-  const data = await readJson('./seed.json');
+  const data = await readJson('/seed.json');
   await writeJson(data);
 };
 
