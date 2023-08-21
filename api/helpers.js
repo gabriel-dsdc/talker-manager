@@ -5,12 +5,21 @@ const HTTP_BAD_REQUEST_STATUS = 400;
 const HTTP_UNAUTHORIZED_STATUS = 401;
 
 const readJson = async (path = '/talker.json') => {
-  const jsonPath = (join(__dirname, path));
-  const jsonFile = await fs.readFile(jsonPath, 'utf-8');
+  let jsonFile;
+  try {
+    jsonFile = await fs.readFile(`/tmp${path}`, 'utf-8');
+  } catch (error) {
+    jsonFile = await fs.readFile(join(__dirname, path), 'utf-8');
+  }
   return JSON.parse(jsonFile);
 };
 const writeJson = async (data) => {
-  const jsonPath = (join(__dirname, '/talker.json'));
+  let jsonPath = '';
+  if (process.env.NODE_ENV === 'production') {
+    jsonPath = ('/tmp/talker.json');
+  } else {
+    jsonPath = (join(__dirname, '/talker.json'));
+  }
   await fs.writeFile(jsonPath, JSON.stringify(data, null, 2), 'utf-8');
 };
 
