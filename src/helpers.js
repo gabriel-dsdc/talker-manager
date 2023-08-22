@@ -9,7 +9,7 @@ const readJson = async (path = 'talker.json', parse = true) => {
   try {
     jsonFile = await fs.readFile(`/tmp/${path}`, 'utf-8');
   } catch (error) {
-    jsonFile = await fs.readFile(join(__dirname, path), 'utf-8');
+    jsonFile = await fs.readFile(join(process.cwd(), 'src', path), 'utf-8');
   }
   return (parse && JSON.parse(jsonFile)) || jsonFile;
 };
@@ -19,7 +19,7 @@ const writeJson = async (data) => {
   if (process.env.NODE_ENV === 'production') {
     jsonPath = ('/tmp/talker.json');
   } else {
-    jsonPath = (join(__dirname, 'talker.json'));
+    jsonPath = (join(process.cwd(), 'src', 'talker.json'));
   }
   await fs.writeFile(jsonPath, JSON.stringify(data, null, 2), 'utf-8');
 };
