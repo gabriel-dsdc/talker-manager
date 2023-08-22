@@ -24,7 +24,8 @@ app.get('/docs/openapi.json', (_req, res) => res.type('json')
   .send(JSON.stringify(swaggerDocument, null, 2)));
 app.use('/docs', (req, _res, next) => {
   swaggerDocument.servers = [
-    process.env.VERCEL_URL ? { url: process.env.VERCEL_URL, description: 'Production server' }
+    process.env.VERCEL_URL 
+    ? { url: `https://${process.env.VERCEL_URL}`, description: 'Production server' }
     : { url: `http://${req.get('host')}`, description: 'Development server' },
   ];
   next();
