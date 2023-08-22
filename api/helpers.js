@@ -4,15 +4,16 @@ const { join } = require('path');
 const HTTP_BAD_REQUEST_STATUS = 400;
 const HTTP_UNAUTHORIZED_STATUS = 401;
 
-const readJson = async (path = '/talker.json') => {
+const readJson = async (path = '/talker.json', parse = true) => {
   let jsonFile;
   try {
     jsonFile = await fs.readFile(`/tmp${path}`, 'utf-8');
   } catch (error) {
     jsonFile = await fs.readFile(join(__dirname, path), 'utf-8');
   }
-  return JSON.parse(jsonFile);
+  return (parse && JSON.parse(jsonFile)) || jsonFile;
 };
+
 const writeJson = async (data) => {
   let jsonPath = '';
   if (process.env.NODE_ENV === 'production') {
@@ -23,9 +24,12 @@ const writeJson = async (data) => {
   await fs.writeFile(jsonPath, JSON.stringify(data, null, 2), 'utf-8');
 };
 
-const resetJsonData = async () => {
-  const data = await readJson('/seed.json');
-  await writeJson(data);
+const restoreJsonData = async () => {
+  const originalJson = await readJson(undefined, false);
+  const seedJson = await readJson('/seed.json', false);
+  if (seedJson !== originalJson) {
+    await writeJson(JSON.parse(seedJson));
+  }
 };
 
 const isEmailValid = (email) => email.includes('@') && email.includes('.com');
@@ -151,7 +155,7 @@ const searchTalker = async (query) => {
 
 module.exports = {
   readJson,
-  resetJsonData,
+  restoreJsonData,
   createTalker,
   editTalker,
   deleteTalker,
