@@ -4,10 +4,10 @@ const { join } = require('path');
 const HTTP_BAD_REQUEST_STATUS = 400;
 const HTTP_UNAUTHORIZED_STATUS = 401;
 
-const readJson = async (path = '/talker.json', parse = true) => {
+const readJson = async (path = 'talker.json', parse = true) => {
   let jsonFile;
   try {
-    jsonFile = await fs.readFile(`/tmp${path}`, 'utf-8');
+    jsonFile = await fs.readFile(`/tmp/${path}`, 'utf-8');
   } catch (error) {
     jsonFile = await fs.readFile(join(__dirname, path), 'utf-8');
   }
@@ -19,14 +19,14 @@ const writeJson = async (data) => {
   if (process.env.NODE_ENV === 'production') {
     jsonPath = ('/tmp/talker.json');
   } else {
-    jsonPath = (join(__dirname, '/talker.json'));
+    jsonPath = (join(__dirname, 'talker.json'));
   }
   await fs.writeFile(jsonPath, JSON.stringify(data, null, 2), 'utf-8');
 };
 
 const restoreJsonData = async () => {
   const originalJson = await readJson(undefined, false);
-  const seedJson = await readJson('/seed.json', false);
+  const seedJson = await readJson('seed.json', false);
   if (seedJson !== originalJson) {
     await writeJson(JSON.parse(seedJson));
   }
