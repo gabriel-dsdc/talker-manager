@@ -5,7 +5,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./openapi.json');
 const {
   readJson,
-  resetJsonData,
+  restoreJsonData,
   createTalker,
   isEmailValid,
   isPasswordValid,
@@ -59,7 +59,7 @@ const PORT = process.env.PORT || 3000;
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', async (_request, response) => {
-  await resetJsonData();
+  await restoreJsonData();
   response.redirect(307, '/docs/');
 });
 
