@@ -20,9 +20,22 @@ const {
 
 const app = express();
 app.use(bodyParser.json());
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+app.get('/docs/openapi.json', (_req, res) => res.type('json')
+  .send(JSON.stringify(swaggerDocument, null, 2)));
+app.use('/docs', (req, _res, next) => {
+  swaggerDocument.servers = [
+    process.env.VERCEL_URL ? { url: process.env.VERCEL_URL, description: 'Production server' }
+    : { url: `http://${req.get('host')}`, description: 'Development server' },
+  ];
+  next();
+}, swaggerUi.serve, swaggerUi.setup(null, {
+  customSiteTitle: 'Talker Manager - Swagger UI',
   customCss: '.swagger-ui .topbar { display: none }',
+  customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.4.2/swagger-ui.min.css',
+  customJs: ['https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.4.2/swagger-ui-bundle.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.4.2/swagger-ui-standalone-preset.min.js'],
   swaggerOptions: {
+    url: 'openapi.json',
     persistAuthorization: true,
     operationsSorter: (a, b) => {
       const customOrder = ['get-/talker', 'get-/talker/{id}', 'post-/login',
@@ -42,15 +55,12 @@ const HTTP_CREATED_STATUS = 201;
 const HTTP_NO_CONTENT_STATUS = 204;
 const HTTP_BAD_REQUEST_STATUS = 400;
 const HTTP_NOT_FOUND_STATUS = 404;
-const PORT = '3000';
+const PORT = process.env.PORT || 3000;
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', async (_request, response) => {
   await resetJsonData();
-  response.status(HTTP_OK_STATUS).send(
-    '<p style="display:flex;justify-content:center;align-items:center;font-size:2em;'
-    + 'height:calc(100vh - 24px);margin:0;"><a href="/docs">/docs</a><p>',
-  );
+  response.redirect(307, '/docs/');
 });
 
 app.get('/talker', async (_req, res) => {
